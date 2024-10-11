@@ -1,0 +1,175 @@
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useState } from 'react';
+import Constants from 'expo-constants';
+
+const BmiCalculator = () => {
+  const [weight, setWeight] = useState('');
+  const [height, setHeight] = useState('');
+  const [bmi, setBmi] = useState('');
+  const [description, setDescription] = useState('');
+  const [history, setHistory] = useState([]);
+
+  const calculateBMI = () => {
+    const bmiValue = weight / ((height / 100) * (height / 100));
+    setBmi(bmiValue.toFixed(1));
+
+    let bmiDescription = '';
+    if (bmiValue < 18.5) {
+      bmiDescription = 'Underweight, Eat More!!!';
+    } else if (bmiValue >= 18.5 && bmiValue <= 24.9) {
+      bmiDescription = 'Normal, Keep it up and stay healthy';
+    } else if (bmiValue >= 25 && bmiValue <= 29.9) {
+      bmiDescription = 'Overweight, Start doing exercises!!';
+    } else {
+      bmiDescription = 'Obese, Work hard in Gym!!';
+    }
+
+    setDescription(bmiDescription);
+    setHistory([...history, { bmi: bmiValue.toFixed(1), description: bmiDescription, date: new Date().toLocaleString() }]);
+  };
+
+  const resetInputs = () => {
+    setWeight('');
+    setHeight('');
+    setBmi('');
+    setDescription('');
+  };
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.title}>
+        <Text style={styles.titleText}>BMI Calculator</Text>
+      </View>
+      <TextInput
+        style={styles.input}
+        value={weight}
+        onChangeText={(text) => setWeight(text)}
+        placeholder='Weight in Kg'
+        placeholderTextColor="#a9a9a9"
+        keyboardType='numeric'
+      />
+      <TextInput
+        style={styles.input}
+        value={height}
+        onChangeText={(text) => setHeight(text)}
+        placeholder='Height in Cm'
+        placeholderTextColor="#a9a9a9"
+        keyboardType='numeric'
+      />
+      <TouchableOpacity style={styles.button} onPress={calculateBMI}>
+        <Text style={styles.buttonText}>Calculate</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.resetButton} onPress={resetInputs}>
+        <Text style={styles.resetButtonText}>Reset</Text>
+      </TouchableOpacity>
+      <View style={styles.resultView}>
+        <Text style={styles.result}>{bmi}</Text>
+        <Text style={styles.result}>{description}</Text>
+      </View>
+      <ScrollView style={styles.historyContainer}>
+        <Text style={styles.historyTitle}>History</Text>
+        {history.map((item, index) => (
+          <View key={index} style={styles.historyItem}>
+            <Text style={styles.historyText}>{item.date}</Text>
+            <Text style={styles.historyText}>BMI: {item.bmi}</Text>
+            <Text style={styles.historyText}>{item.description}</Text>
+          </View>
+        ))}
+      </ScrollView>
+    </View>
+  );
+};
+
+export default BmiCalculator;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingTop: Constants.statusBarHeight,
+    backgroundColor: '#f0f4f7',
+  },
+  title: {
+    backgroundColor: '#4a90e2',
+    height: 80,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  titleText: {
+    fontSize: 30,
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+  input: {
+    height: 55,
+    margin: 15,
+    borderWidth: 1,
+    padding: 10,
+    borderRadius: 5,
+    backgroundColor: '#ffffff',
+    fontSize: 18,
+    borderColor: '#dcdcdc',
+    color: '#000',
+  },
+  button: {
+    height: 55,
+    margin: 15,
+    borderWidth: 1,
+    padding: 10,
+    borderRadius: 5,
+    backgroundColor: '#5cb85c',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  buttonText: {
+    fontSize: 20,
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+  resetButton: {
+    height: 55,
+    margin: 15,
+    borderWidth: 1,
+    padding: 10,
+    borderRadius: 5,
+    backgroundColor: '#d9534f',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  resetButtonText: {
+    fontSize: 20,
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+  resultView: {
+    margin: 15,
+    alignItems: 'center',
+  },
+  result: {
+    fontSize: 25,
+    color: '#4a90e2',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  historyContainer: {
+    flex: 1,
+    margin: 15,
+  },
+  historyTitle: {
+    fontSize: 22,
+    color: '#4a90e2',
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  historyItem: {
+    padding: 10,
+    backgroundColor: '#fff',
+    borderRadius: 5,
+    marginBottom: 10,
+    elevation: 1,
+  },
+  historyText: {
+    fontSize: 16,
+    color: '#333',
+  },
+});
